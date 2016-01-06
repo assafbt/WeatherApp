@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ /**
-  ~  * Created by assafbt on <Date>
+  ~  * Created by assafbt on 05/01/2016
   ~  */
   -->
 
@@ -15,14 +15,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.assafbt.studyprojects.weatherapp.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="117dp" />
+
 
     <Spinner
         android:layout_width="wrap_content"
@@ -31,4 +24,12 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
+
+    <ListView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:id="@+id/ArraylistViewrRight"
+        android:background="#ABCDEF"/>
 </RelativeLayout>

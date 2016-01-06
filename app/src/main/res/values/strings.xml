@@ -2,6 +2,7 @@
     <string name="app_name">WeatherApp</string>
 
     <string-array name="myLocations">
+        <item> Current Location </item>
         <item> London</item>
         <item> Paris </item>
         <item> Tokyo </item>
@@ -10,7 +11,7 @@
         <item> Moscow </item>
         <item> Rome </item>
         <item> Beijing </item>
-        <item> Stockholm </item>
+
 
     </string-array>
 
