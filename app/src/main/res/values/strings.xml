@@ -2,15 +2,15 @@
     <string name="app_name">WeatherApp</string>
 
     <string-array name="myLocations">
-        <item> Current Location </item>
-        <item> London</item>
-        <item> Paris </item>
-        <item> Tokyo </item>
-        <item> Vienna </item>
-        <item> Madrid </item>
-        <item> Moscow </item>
-        <item> Rome </item>
-        <item> Beijing </item>
+        <item>Current Location</item>
+        <item>London</item>
+        <item>Paris</item>
+        <item>Tokyo</item>
+        <item>Vienna</item>
+        <item>Madrid</item>
+        <item>Moscow</item>
+        <item>Rome</item>
+        <item>Beijing</item>
 
 
     </string-array>
