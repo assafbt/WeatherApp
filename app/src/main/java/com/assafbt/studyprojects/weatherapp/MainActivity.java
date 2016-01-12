@@ -16,6 +16,7 @@ import android.location.LocationManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -56,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     RequestQueue queue;
     Button getWeatherButton;
     String description, url;
+    Location GPSlocation;
 
 
     @Override
@@ -167,28 +169,84 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
 
 
-    }
+    }//onCreate
 
-
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         TextView myText = (TextView) view;
         String myLocation = (String) myText.getText();
         String checkLocation = "Current Location";
-
-        url = "http://api.openweathermap.org/data/2.5/forecast?q="+ myText.getText() +"&units=metric&appid=894f115787195ed5935778bee54ac0c5";
-
+        
         Toast.makeText(this, "Weather in " + myText.getText(), Toast.LENGTH_SHORT).show();
+        if(myLocation.equals(checkLocation)){
+            Log.e("equals: ","true");
+
+            locationListener = new LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+                    Log.e("onLocationChanged", "GPS location");
+                    GPSlocation = new Location(location);
+                    //GPSlocation = location;
+                    int lon = (int) GPSlocation.getLongitude();
+                    int lat = (int) GPSlocation.getLatitude();
+                    Log.e("getLongitude",lon+"" );
+                    Log.e("getLatitude", lat+"");
+
+                    url = "api.openweathermap.org/data/2.5/forecast?lat="+ lat +"&lon="+lon;
+                }
+
+                @Override
+                public void onStatusChanged(String s, int i, Bundle bundle) {
+
+                }
+
+                @Override
+                public void onProviderEnabled(String s) {
+
+                }
+
+                @Override
+                public void onProviderDisabled(String s) {
+
+                }
+            };
+        }//if Current Location
+        else {
+            Log.e("onLocationChanged", myText.getText()+"");
+            url = "http://api.openweathermap.org/data/2.5/forecast?q=" + myText.getText() + "&units=metric&appid=894f115787195ed5935778bee54ac0c5";
+        }
+
 
         //myText.invalidate();
 
 
     }
-
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
 
     }
 
-    //init1
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        permissionManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+    }
+
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    @Override
+    protected void onStop() {
+        super.onStop();
+        try {
+            locationManager.removeUpdates(locationListener);
+
+        }catch (SecurityException se){
+            se.printStackTrace();
+        }
+    }
+
 }
