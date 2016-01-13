@@ -6,15 +6,18 @@
 
 package com.assafbt.studyprojects.weatherapp;
 
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 
+
 /**
- * Created by assafbt on 06/01/2016.
+ * Created by ilandbt on 09/11/2015.
  */
 public class PermissionManager {
+
     private Activity mActivity;
 //    private View mView;
 
@@ -84,4 +87,3 @@ public class PermissionManager {
         }
     }
 }
-

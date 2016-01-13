@@ -41,6 +41,7 @@ import org.json.JSONObject;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
@@ -174,15 +175,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        showData(view);
+
+    }
+
+    private void showData (View view) {
         TextView myText = (TextView) view;
         String myLocation = (String) myText.getText();
         String checkLocation = "Current Location";
-        
-        Toast.makeText(this, "Weather in " + myText.getText(), Toast.LENGTH_SHORT).show();
-        if(myLocation.equals(checkLocation)){
-            Log.e("equals: ","true");
 
-            locationListener = new LocationListener() {
+        Toast.makeText(this, "Weather in " + myText.getText(), Toast.LENGTH_SHORT).show();
+        if (myLocation.equals(checkLocation)) {
+            Log.e("equals: ", "true");
+
+          /*  locationListener = new LocationListener() {
                 @Override
                 public void onLocationChanged(Location location) {
                     Log.e("onLocationChanged", "GPS location");
@@ -190,10 +196,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     //GPSlocation = location;
                     int lon = (int) GPSlocation.getLongitude();
                     int lat = (int) GPSlocation.getLatitude();
-                    Log.e("getLongitude",lon+"" );
-                    Log.e("getLatitude", lat+"");
+                    Log.e("getLongitude", lon + "");
+                    Log.e("getLatitude", lat + "");
 
-                    url = "api.openweathermap.org/data/2.5/forecast?lat="+ lat +"&lon="+lon;
+                    url = "api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon=" + lon;
                 }
 
                 @Override
@@ -210,18 +216,28 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 public void onProviderDisabled(String s) {
 
                 }
-            };
+            };*/
+            double[] loc;
+            loc = getGPS();
+            Log.e("lat, lon == ", loc[0] + ", " + loc[1]);
+            //http://api.openweathermap.org/data/2.5/forecast?lat=31.74706861   &lon=35.2160851  &appid=894f115787195ed5935778bee54ac0c5
+            url = "http://api.openweathermap.org/data/2.5/forecast?lat=" + loc[0] + "&lon=" + loc[1]+"&units=metric&appid=894f115787195ed5935778bee54ac0c5";
+            Log.e("url = ", url);
+
+
+
         }//if Current Location
         else {
-            Log.e("onLocationChanged", myText.getText()+"");
+            Log.e("onLocationChanged", myText.getText() + "");
             url = "http://api.openweathermap.org/data/2.5/forecast?q=" + myText.getText() + "&units=metric&appid=894f115787195ed5935778bee54ac0c5";
         }
 
 
         //myText.invalidate();
 
-
     }
+
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
@@ -244,9 +260,40 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         try {
             locationManager.removeUpdates(locationListener);
 
-        }catch (SecurityException se){
+        } catch (SecurityException se) {
             se.printStackTrace();
         }
+    }
+
+    private double[] getGPS() {
+        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        List<String> providers = lm.getProviders(true);
+
+/* Loop over the array backwards, and if you get an accurate location, then break                 out the loop*/
+        Location l = null;
+
+        for (int i = providers.size() - 1; i >= 0; i--) {
+            /*if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                double[] grantResults = {1};
+                return grantResults;
+            }*/
+            l = lm.getLastKnownLocation(providers.get(i));
+            if (l != null) break;
+        }
+
+        double[] gps = new double[2];
+        if (l != null) {
+            gps[0] = l.getLatitude();
+            gps[1] = l.getLongitude();
+        }
+        return gps;
     }
 
 }
