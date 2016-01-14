@@ -254,7 +254,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    @Override
+    /*@Override
     protected void onStop() {
         super.onStop();
         try {
@@ -263,7 +263,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         } catch (SecurityException se) {
             se.printStackTrace();
         }
-    }
+    }*/
 
     private double[] getGPS() {
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
