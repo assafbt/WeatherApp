@@ -122,7 +122,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         //get time
                         // JSONObject objTime = jObjList0.getJSONObject("sys");
                         String time1 = jObjList0.getString("dt_txt");
-
+                        String[] parts = time1.split("\\-|:|\\s+");
+                        String formatedTime = parts[2]+"/"+parts[1]+"/"+parts[0]+"\n"+parts[3]+":"+parts[4];
 
                         // get icon
                         JSONArray arrDesc = jObjList0.getJSONArray("weather");
@@ -144,10 +145,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         // adding myFormat to list
 
                         HashMap<String, String> hMap = new HashMap<String, String>();
-                        hMap.put("time_date", time1);
+                        hMap.put("time_date", formatedTime);
                         hMap.put("temperature", String.valueOf(temp) + 'c');
                         hMap.put("descriptionView", description);
                         //String iconURL = "http://openweathermap.org/img/w/" + icon + ".png";
+
+                       // Picasso.with(this).load("YOUR IMAGE URL HERE").into(imageView);
                         hMap.put("iconView", "http://openweathermap.org/img/w/" + icon + ".png");
                         arrayList.add(hMap);
 
