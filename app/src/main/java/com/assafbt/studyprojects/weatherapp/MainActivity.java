@@ -136,6 +136,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         String city = jObjCity.getString("name");
 
 
+
                         // jokeString= jokeObj.toString();
                         //dialog.cancel();
 
@@ -226,7 +227,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             };*/
             double[] loc;
             loc = getGPS();
-            Log.e("lat, lon == ", loc[0] + ", " + loc[1]);
+            Log.e("1) lat, lon == ", loc[0] + ", " + loc[1]);
             //http://api.openweathermap.org/data/2.5/forecast?lat=31.74706861   &lon=35.2160851  &appid=894f115787195ed5935778bee54ac0c5
             url = "http://api.openweathermap.org/data/2.5/forecast?lat=" + loc[0] + "&lon=" + loc[1]+"&units=metric&appid=894f115787195ed5935778bee54ac0c5";
             Log.e("url = ", url);
@@ -272,15 +273,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }*/
 
-    private double[] getGPS() {
-        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+    private double[] getGPS() {     LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         List<String> providers = lm.getProviders(true);
 
 /* Loop over the array backwards, and if you get an accurate location, then break                 out the loop*/
         Location l = null;
 
         for (int i = providers.size() - 1; i >= 0; i--) {
-            /*if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
                 //    ActivityCompat#requestPermissions
                 // here to request the missing permissions, and then overriding
@@ -290,7 +290,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 // for ActivityCompat#requestPermissions for more details.
                 double[] grantResults = {1};
                 return grantResults;
-            }*/
+            }
             l = lm.getLastKnownLocation(providers.get(i));
             if (l != null) break;
         }
@@ -300,6 +300,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             gps[0] = l.getLatitude();
             gps[1] = l.getLongitude();
         }
+
+        Log.e("2) lat, lon == ", gps[0] + ", " + gps[1]);
         return gps;
     }
 
