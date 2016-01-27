@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     String description, url;
     Location GPSlocation;
+    ProgressDialog dialog;
 
 
     @Override
@@ -88,13 +89,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // url = "http://api.openweathermap.org/data/2.5/forecast?id=524901&appid=2de143494c0b295cca9337e1e96b00e0";
 
 
-        final ProgressDialog dialog = new ProgressDialog(this);
-
+        dialog = new ProgressDialog(this);
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
 
+       // dialog.show();
         JsonToUrl();
-
+       // dialog.cancel();
 
     }//onCreate
 
@@ -102,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     public void JsonToUrl() {
 
-        //dialog.show();
+        dialog.show();
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
 
@@ -135,14 +136,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         JSONObject jObjCity = response.getJSONObject("city");
                         String city = jObjCity.getString("name");
 
-
-
-                        // jokeString= jokeObj.toString();
-                        //dialog.cancel();
-
-                        // String thisLocation = arrayView.toString();
-                        //String myFormat = "on time " + time1 + " the weather at " + city + " is " + description + " with temp: " + temp + " with icon " + icon;
-
                         // adding myFormat to list
 
                         HashMap<String, String> hMap = new HashMap<String, String>();
@@ -157,6 +150,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                         schedule = new SimpleAdapter(getApplicationContext(), arrayList, R.layout.listview_row, new String[]{"time_date", "temperature", "descriptionView", "iconView"}, new int[]{R.id.time_date, R.id.temperature, R.id.descriptionView, R.id.iconView});
 
+                        dialog.cancel();
 
                     }//for
                     arrayView.setAdapter(schedule);
