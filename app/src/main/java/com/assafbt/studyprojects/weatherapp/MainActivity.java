@@ -20,7 +20,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
@@ -38,26 +37,22 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
-    MainActivity mActivity;
     SimpleAdapter schedule;
     Spinner spinner;
     ArrayList<HashMap<String, String>> arrayList;
     ListView arrayView;
-    ArrayAdapter arrayAdapter;
     ArrayAdapter adapter;
     private PermissionManager permissionManager;
     private LocationManager locationManager;
     private LocationListener locationListener;
     private Location thisLocation;
     RequestQueue queue;
-
     String description, url;
     Location GPSlocation;
     ProgressDialog dialog;
@@ -70,7 +65,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
-        //arrayView = (ListView) findViewById(R.id.ArraylistViewrRight);
         arrayView = (ListView) findViewById(R.id.textView);
 
         spinner = (Spinner) findViewById(R.id.spinner);
@@ -79,11 +73,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // begin Array Adapter
         adapter = ArrayAdapter.createFromResource(this, R.array.myLocations, android.R.layout.simple_spinner_item);
         spinner.setAdapter(adapter);
-
-
         // end Array Adapter
 
-        //ArrayList list = new ArrayList();
 
         queue = Volley.newRequestQueue(this);
         // url = "http://api.openweathermap.org/data/2.5/forecast?id=524901&appid=2de143494c0b295cca9337e1e96b00e0";
@@ -93,14 +84,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
 
-       // dialog.show();
         JsonToUrl();
-       // dialog.cancel();
+
 
     }//onCreate
 
 
-
+    /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    * JsonToUrl - parser the data from JSON to HashMap
+    * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    */
     public void JsonToUrl() {
 
         dialog.show();
@@ -111,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             public void onResponse(JSONObject response) {
                 try {
 
-
+                    String city="";
                     JSONArray arrList = response.getJSONArray("list");
                     arrayList = new ArrayList<HashMap<String, String>>();
                     for (int i = 0; i < arrList.length(); i++) {
@@ -121,7 +114,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         double temp = jObjMain.getDouble("temp");
 
                         //get time
-                        // JSONObject objTime = jObjList0.getJSONObject("sys");
                         String time1 = jObjList0.getString("dt_txt");
                         String[] parts = time1.split("\\-|:|\\s+");
                         String formatedTime = parts[2]+"/"+parts[1]+"/"+parts[0]+"\n"+parts[3]+":"+parts[4];
@@ -134,10 +126,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                         // get city name
                         JSONObject jObjCity = response.getJSONObject("city");
-                        String city = jObjCity.getString("name");
+                         city = jObjCity.getString("name");
 
                         // adding myFormat to list
-
                         HashMap<String, String> hMap = new HashMap<String, String>();
                         hMap.put("time_date", formatedTime);
                         hMap.put("temperature", String.valueOf(temp) + 'c');
@@ -153,6 +144,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         dialog.cancel();
 
                     }//for
+                    Toast.makeText(getApplicationContext(), "Weather in " + city +"", Toast.LENGTH_SHORT).show();
                     arrayView.setAdapter(schedule);
 
                 } catch (JSONException e) {
@@ -178,19 +170,21 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         showData(view);
         JsonToUrl();
 
+    }//onItemSelected
 
-    }
-
+    /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    * showData is building the URL, base on city or location, for parser
+    * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    */
     private void showData (View view) {
         TextView myText = (TextView) view;
         String myLocation = (String) myText.getText();
         String checkLocation = "Current Location";
 
-        Toast.makeText(this, "Weather in " + myText.getText(), Toast.LENGTH_SHORT).show();
         if (myLocation.equals(checkLocation)) {
             Log.e("equals: ", "true");
 
-          /*  locationListener = new LocationListener() {
+           locationListener = new LocationListener() {
                 @Override
                 public void onLocationChanged(Location location) {
                     Log.e("onLocationChanged", "GPS location");
@@ -218,7 +212,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 public void onProviderDisabled(String s) {
 
                 }
-            };*/
+            };
             double[] loc;
             loc = getGPS();
             Log.e("1) lat, lon == ", loc[0] + ", " + loc[1]);
@@ -234,17 +228,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             url = "http://api.openweathermap.org/data/2.5/forecast?q=" + myText.getText() + "&units=metric&appid=894f115787195ed5935778bee54ac0c5";
         }
 
-
-        //myText.invalidate();
-
-    }
+    }//showData
 
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
 
-    }
+    }//onNothingSelected
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
@@ -252,36 +243,29 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         permissionManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-    }
+    }//onRequestPermissionsResult
 
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /*@Override
-    protected void onStop() {
+    @Override
+    public void onStop() {
         super.onStop();
-        try {
-            locationManager.removeUpdates(locationListener);
+        queue.cancelAll("GET");
+    }//onStop
 
-        } catch (SecurityException se) {
-            se.printStackTrace();
-        }
-    }*/
 
+    /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    * get GPS Location (Latitude,Longitude)
+    * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    */
     private double[] getGPS() {     LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         List<String> providers = lm.getProviders(true);
 
-/* Loop over the array backwards, and if you get an accurate location, then break                 out the loop*/
+        /* Loop over the array backwards, and if you get an accurate location, then break out the loop*/
         Location l = null;
 
         for (int i = providers.size() - 1; i >= 0; i--) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
                 double[] grantResults = {1};
                 return grantResults;
             }
@@ -297,6 +281,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         Log.e("2) lat, lon == ", gps[0] + ", " + gps[1]);
         return gps;
-    }
+    }//getGPS
 
 }
